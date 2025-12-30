@@ -6,11 +6,11 @@
 
 ---
 
-## 📋 Overview
+##  Overview
 
 The **UNO Q Pin Toggle** application provides a modern, interactive web interface for controlling every pin on the Arduino UNO Q board. Toggle digital pins, analog pins, and RGB LED channels in real-time through an intuitive browser-based dashboard.
 
-### ✨ Key Features
+###  Key Features
 
 - **Real-time Control** — Instant pin state updates via WebSocket communication
 - **Interactive Board View** — Visual representation of the Arduino UNO Q with clickable toggle switches
@@ -22,7 +22,7 @@ The **UNO Q Pin Toggle** application provides a modern, interactive web interfac
 
 ---
 
-## 🧱 Brick Used
+##  Brick Used
 
 This example uses the following Brick:
 
@@ -32,7 +32,7 @@ This example uses the following Brick:
 
 ---
 
-## 🔧 Hardware and Software Requirements
+##  Hardware and Software Requirements
 
 ### Hardware
 
@@ -49,7 +49,7 @@ This example uses the following Brick:
 
 ---
 
-## 🚀 How to Use
+##  How to Use
 
 1. **Run the App** — Launch the application from Arduino App Lab
 2. **Open in Browser** — Navigate to `<UNO-Q-IP-ADDRESS>:7000` in your web browser
@@ -58,9 +58,9 @@ This example uses the following Brick:
 
 ---
 
-## ⚙️ How It Works
+##  How It Works
 
-### 🔧 Backend (`main.py`)
+###  Backend (`main.py`)
 
 The Python backend handles all communication between the web interface and the microcontroller:
 
@@ -69,7 +69,7 @@ The Python backend handles all communication between the web interface and the m
 - **REST API** — Exposes `/states` endpoint for retrieving current pin states
 - **WebSocket Events** — Real-time bidirectional communication with the frontend
 
-### 💻 Frontend (`index.html` + `app.js`)
+###  Frontend (`index.html` + `app.js`)
 
 The web interface provides an intuitive control experience:
 
@@ -81,7 +81,7 @@ The web interface provides an intuitive control experience:
 
 ---
 
-## 📖 Understanding the Code
+##  Understanding the Code
 
 Once the application is running, access it from your web browser at `<UNO-Q-IP-ADDRESS>:7000`. The system performs the following operations:
 
@@ -176,7 +176,3 @@ void loop() {}
 - Each `Bridge.provide("<name>", <fn>)` pairs with the Python call for simple boolean pin control
 
 ---
-
-## 📄 License
-
-See the [LICENSE](LICENSE) file for details.
