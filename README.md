@@ -45,7 +45,7 @@ This example uses the following Brick:
 
 - Arduino App Lab
 
-> **💡 Tip:** You can run this example using your Arduino UNO Q as a Single Board Computer (SBC) with a [USB-C hub](https://store.arduino.cc/products/usb-c-to-hdmi-multiport-adapter-with-ethernet-and-usb-hub), mouse, keyboard, and monitor attached.
+> **💡 Tip:** You can run this example using your Arduino UNO Q as a Single Board Computer (SBC) with a [USB-C hub](https://a.co/d/i1lxgC6), mouse, keyboard, and monitor attached.
 
 ---
 
