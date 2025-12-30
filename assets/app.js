@@ -102,6 +102,18 @@ function updatePinStats() {
   if (totalPinsEl) totalPinsEl.textContent = PIN_LAYOUT.length;
 }
 
+// Update LED indicator in the RGB LED Control panel
+function updateLedIndicator(name, isActive) {
+  const ledEl = document.getElementById(`led-${name}`);
+  if (ledEl) {
+    if (isActive) {
+      ledEl.classList.add('active');
+    } else {
+      ledEl.classList.remove('active');
+    }
+  }
+}
+
 // --------------- Connection Status -----------------------------------
 function updateConnectionStatus(connected) {
   const statusEl = document.getElementById('connectionStatus');
@@ -181,6 +193,10 @@ function setChecked(name, value, logActivity = false) {
     if (logActivity) {
       addActivityLog(name, newState);
     }
+    // Update LED indicator if this is an LED pin
+    if (name.startsWith('LED')) {
+      updateLedIndicator(name, newState);
+    }
   }
   updatePinStats();
 }
@@ -213,6 +229,10 @@ document.addEventListener("DOMContentLoaded", () => {
       socket.emit("pin_toggle", { name, state: stateBool ? "on" : "off" });
       addActivityLog(name, stateBool);
       updatePinStats();
+      // Update LED indicator if this is an LED pin
+      if (name.startsWith('LED')) {
+        updateLedIndicator(name, stateBool);
+      }
       console.log(`${name} -> ${stateBool ? "ON" : "OFF"}`);
     });
   });
