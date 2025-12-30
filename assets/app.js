@@ -53,6 +53,88 @@ const PIN_LAYOUT = [
   { name: "LED4_B", top: LED_TOPS + STEP * 6, left: LED_LEFT },
 ];
 
+// --------------- Activity Log & Stats --------------------------------
+const MAX_LOG_ENTRIES = 20;
+
+function getTimeString() {
+  const now = new Date();
+  return now.toLocaleTimeString('en-US', { hour12: false });
+}
+
+function addActivityLog(pinName, state, isInitial = false) {
+  const logContainer = document.getElementById('activityLog');
+  if (!logContainer) return;
+
+  const stateText = state ? 'ON' : 'OFF';
+  const stateClass = state ? 'activity-on' : 'activity-off';
+  const actionText = isInitial ? 'initialized' : 'toggled';
+
+  const entry = document.createElement('div');
+  entry.className = `activity-item ${stateClass}`;
+  entry.innerHTML = `
+    <span class="activity-time">${getTimeString()}</span>
+    <span class="activity-msg"><strong>${pinName}</strong> ${actionText} → ${stateText}</span>
+  `;
+
+  // Remove the placeholder if it exists
+  const placeholder = logContainer.querySelector('.activity-info');
+  if (placeholder) placeholder.remove();
+
+  // Add new entry at top
+  logContainer.insertBefore(entry, logContainer.firstChild);
+
+  // Keep only last N entries
+  while (logContainer.children.length > MAX_LOG_ENTRIES) {
+    logContainer.removeChild(logContainer.lastChild);
+  }
+}
+
+function updatePinStats() {
+  const activePins = PIN_LAYOUT.filter(({ name }) => {
+    const el = document.getElementById(`pin-${name}`);
+    return el?.checked;
+  }).length;
+
+  const activePinsEl = document.getElementById('activePinsCount');
+  const totalPinsEl = document.getElementById('totalPinsCount');
+
+  if (activePinsEl) activePinsEl.textContent = activePins;
+  if (totalPinsEl) totalPinsEl.textContent = PIN_LAYOUT.length;
+}
+
+// --------------- Connection Status -----------------------------------
+function updateConnectionStatus(connected) {
+  const statusEl = document.getElementById('connectionStatus');
+  if (!statusEl) return;
+
+  const dot = statusEl.querySelector('.status-dot');
+  const text = statusEl.querySelector('.status-text');
+
+  statusEl.classList.remove('connected', 'disconnected');
+
+  if (connected) {
+    statusEl.classList.add('connected');
+    if (text) text.textContent = 'Connected';
+  } else {
+    statusEl.classList.add('disconnected');
+    if (text) text.textContent = 'Disconnected';
+  }
+}
+
+// Socket connection events
+socket.on('connect', () => {
+  updateConnectionStatus(true);
+  console.log('WebSocket connected');
+});
+
+socket.on('disconnect', () => {
+  updateConnectionStatus(false);
+  console.log('WebSocket disconnected');
+});
+
+socket.on('connect_error', () => {
+  updateConnectionStatus(false);
+});
 
 // --------------- Scale chip with image --------------------------------
 const boardEl = document.querySelector(".board");
@@ -81,6 +163,7 @@ function makeSwitch({ name, top, left }) {
   input.id = `pin-${name}`;
   input.className = "switch-input";
   input.setAttribute("role", "switch");
+  input.setAttribute("aria-label", `Toggle ${name}`);
 
   const face = document.createElement("span");
   face.className = "switch-ios";
@@ -90,9 +173,29 @@ function makeSwitch({ name, top, left }) {
   return wrap;
 }
 
-function setChecked(name, value) {
+function setChecked(name, value, logActivity = false) {
   const el = document.getElementById(`pin-${name}`);
-  if (el) el.checked = value ? true : false;
+  if (el) {
+    const newState = value ? true : false;
+    el.checked = newState;
+    if (logActivity) {
+      addActivityLog(name, newState);
+    }
+  }
+  updatePinStats();
+}
+
+// --------------- Quick Actions ---------------------------------------
+function setAllPins(state) {
+  PIN_LAYOUT.forEach(({ name }) => {
+    const el = document.getElementById(`pin-${name}`);
+    if (el && el.checked !== state) {
+      el.checked = state;
+      socket.emit("pin_toggle", { name, state: state ? "on" : "off" });
+      addActivityLog(name, state);
+    }
+  });
+  updatePinStats();
 }
 
 // --------------- Wire everything -------------------------------------
@@ -108,24 +211,53 @@ document.addEventListener("DOMContentLoaded", () => {
     el?.addEventListener("change", () => {
       const stateBool = !!el.checked;
       socket.emit("pin_toggle", { name, state: stateBool ? "on" : "off" });
+      addActivityLog(name, stateBool);
+      updatePinStats();
       console.log(`${name} -> ${stateBool ? "ON" : "OFF"}`);
     });
   });
+
+  // Quick action buttons
+  const btnAllOn = document.getElementById('btnAllOn');
+  const btnAllOff = document.getElementById('btnAllOff');
+
+  btnAllOn?.addEventListener('click', () => setAllPins(true));
+  btnAllOff?.addEventListener('click', () => setAllPins(false));
 
   // bootstrap from backend
   fetch(`http://${window.location.host}/states`, { cache: "no-store" })
     .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
     .then(data => {
       const states = data?.states || {};
-      Object.entries(states).forEach(([name, v]) => setChecked(name, v === true || v === 1 || v === "on" || v === "1"));
+      Object.entries(states).forEach(([name, v]) => {
+        const isOn = v === true || v === 1 || v === "on" || v === "1";
+        setChecked(name, isOn, false);
+      });
+      updatePinStats();
+      
+      // Add initial connection log
+      const logContainer = document.getElementById('activityLog');
+      if (logContainer) {
+        const placeholder = logContainer.querySelector('.activity-info');
+        if (placeholder) {
+          placeholder.querySelector('.activity-time').textContent = getTimeString();
+          placeholder.querySelector('.activity-msg').textContent = 'Connected to Arduino';
+        }
+      }
     })
-    .catch(() => {});
+    .catch((err) => {
+      console.warn('Could not fetch initial states:', err);
+    });
 
   // keep in sync
   socket.on("pin_state_update", (msg) => {
     if (!msg?.name) return;
-    setChecked(msg.name, msg.state === true || msg.state === 1 || msg.state === "on" || msg.state === "1");
+    const isOn = msg.state === true || msg.state === 1 || msg.state === "on" || msg.state === "1";
+    setChecked(msg.name, isOn, true);
   });
 
   socket.on("error", (m) => console.error("Server error:", m));
+
+  // Initialize stats
+  updatePinStats();
 });
