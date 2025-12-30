@@ -516,11 +516,11 @@
    "-I/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/deprecated-avr-comp",
    "-iprefix/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/variants/arduino_uno_q_stm32u585xx",
    "@/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/variants/arduino_uno_q_stm32u585xx/includes.txt",
-   "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/Stream.cpp",
+   "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/String.cpp",
    "-o",
-   "/home/arduino/ArduinoApps/uno-q-pin-toggle-ui/.cache/sketch/core/api/Stream.cpp.o"
+   "/home/arduino/ArduinoApps/uno-q-pin-toggle-ui/.cache/sketch/core/api/String.cpp.o"
   ],
-  "file": "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/Stream.cpp"
+  "file": "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/String.cpp"
  },
  {
   "directory": "/",
@@ -563,11 +563,11 @@
    "-I/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/deprecated-avr-comp",
    "-iprefix/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/variants/arduino_uno_q_stm32u585xx",
    "@/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/variants/arduino_uno_q_stm32u585xx/includes.txt",
-   "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/String.cpp",
+   "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/Stream.cpp",
    "-o",
-   "/home/arduino/ArduinoApps/uno-q-pin-toggle-ui/.cache/sketch/core/api/String.cpp.o"
+   "/home/arduino/ArduinoApps/uno-q-pin-toggle-ui/.cache/sketch/core/api/Stream.cpp.o"
   ],
-  "file": "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/String.cpp"
+  "file": "/home/arduino/.arduino15/packages/arduino/hardware/zephyr/0.52.0/cores/arduino/api/Stream.cpp"
  },
  {
   "directory": "/",
